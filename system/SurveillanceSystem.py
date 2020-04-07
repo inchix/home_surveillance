@@ -25,8 +25,6 @@ import time
 import argparse
 import cv2
 import os
-##import pickle
-##from operator import itemgetter
 import numpy as np
 import dlib
 from subprocess import Popen, PIPE
@@ -44,15 +42,10 @@ from email.mime.base import MIMEBase
 from email import encoders
 import requests
 import json
-##from openface.data import iterImgs
 import Camera
 import FaceRecogniser
-#import openface
-##import aligndlib
 import ImageUtils
 import random
-##import psutil
-##import math
 #
 from websocket import create_connection
 import apprise
@@ -840,12 +833,13 @@ class SurveillanceSystem(object):
             alert.action_taken = True
             
     def send_apprise_notification_alert(self,alert):
+        # send a push message with Apprise - see https://github.com/caronc/apprise
         print(">>>Apprise<<<", alert.alertString)
       
         if not self.apobj:
             self.apobj = apprise.Apprise()
 
-        service = "pbul://o.PqBnVaVMK7VYVjJ2Uhh34UCZ4M45niQJ"
+        service = "" # set an Apprise url here, e.g. Pusbullet "pbul://xyz"
         if service:
             self.apobj.add(service)
         
@@ -865,7 +859,7 @@ class SurveillanceSystem(object):
 
     def send_mycroft_notification_alert(self,alert):
         print(">>>Mycroft<<<", alert.alertString)
-        host = '192.168.100.68'
+        host = '' # set hostname or IP of your Mycroft device here
         if host:    
             uri = 'ws://' + host + ':8181/core'
             ws = create_connection(uri)

@@ -6,7 +6,9 @@ You need to install (in most cases this means download and make/build manually):
 - OpenCV 3.20 (apt package)
 - [Openface](https://github.com/cmusatyalab/openface/)
 
-I have probably have forgotten some depencies...
+I have probably forgotten some depencies...
+
+This makes use of [OpenFacePytorch](https://github.com/thnkim/OpenFacePytorch)
 
 
 # Home Surveillance with Facial Recognition 

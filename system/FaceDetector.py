@@ -17,15 +17,8 @@
 # limitations under the License.
 
 import cv2
-##import numpy as np
-#import os
-#import glob
 import dlib
-#import sys
-#import argparse
 from PIL import Image
-#import math
-#import datetime
 import threading
 import logging
 import ImageUtils

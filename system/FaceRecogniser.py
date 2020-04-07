@@ -34,7 +34,6 @@ import datetime
 import threading
 import logging
 from sklearn.decomposition import PCA
-#from sklearn.grid_search import GridSearchCV
 from sklearn.model_selection import GridSearchCV
 from sklearn.manifold import TSNE
 from sklearn.svm import SVC

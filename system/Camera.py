@@ -18,14 +18,8 @@
 
 import threading
 import time
-#import numpy as np
 import cv2
-#import cv2.cv as cv
 import ImageUtils
-#import dlib
-#import openface
-#import os
-#import argparse
 import logging
 import SurveillanceSystem
 import MotionDetector

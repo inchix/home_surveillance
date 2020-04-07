@@ -39,6 +39,7 @@ LOG_FILE = 'logs/WebApp.log'
 
 # Initialises system variables, this object is the heart of the application
 HomeSurveillance = SurveillanceSystem.SurveillanceSystem() 
+
 # Threads used to continuously push data to the client
 alarmStateThread = threading.Thread() 
 facesUpdateThread = threading.Thread() 

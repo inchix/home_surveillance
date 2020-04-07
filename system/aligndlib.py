@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 #
 # Copyright 2015-2016 Carnegie Mellon University
 #
@@ -14,12 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-##import argparse
 import cv2
 import numpy as np
 import os
 import random
-##import shutil
 
 import openface
 import openface.helper

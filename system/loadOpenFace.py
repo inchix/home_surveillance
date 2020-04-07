@@ -1,4 +1,3 @@
-##import sys
 import numpy
 import torch
 import torch.nn as nn
@@ -36,8 +35,7 @@ class Lambda(LambdaBase):
     def forward(self, input):
         return self.lambda_func(self.forward_prepare(input))
 
-
-#
+    
 def Conv2d(in_dim, out_dim, kernel, stride, padding):
     l = torch.nn.Conv2d(in_dim, out_dim, kernel, stride=stride, padding=padding)
     return l
