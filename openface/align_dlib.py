@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module for dlib-based alignment."""
+#Module for dlib-based alignment.
 
 import cv2
 import dlib

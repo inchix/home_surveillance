@@ -18,15 +18,15 @@
 
 import cv2
 import numpy as np
-import os
-import glob
-import dlib
-import sys
-import argparse
-from PIL import Image
-import math
-import datetime
-import threading
+##import os
+##import glob
+##import dlib
+##import sys
+##import argparse
+##from PIL import Image
+##import math
+##import datetime
+##import threading
 import logging
 
 logger = logging.getLogger(__name__)
@@ -106,8 +106,9 @@ class MotionDetector(object):
             thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel) # Removes small holes i.e noise
             thresh = cv2.dilate(thresh, kernel, iterations=3) # Increases white region by saturating blobs
             cv2.imwrite("motion.jpg", thresh)
-            (cnts, _) = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
-                cv2.CHAIN_APPROX_SIMPLE)
+            #(cnts, _) = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            (_, cnts, _) = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
             logger.debug('////////////////////// filtering & thresholding //////////////////////')
             self.peopleRects = []
             # Loop through all contours

@@ -18,14 +18,14 @@
 
 import threading
 import time
-import numpy as np
+#import numpy as np
 import cv2
-import cv2.cv as cv
+#import cv2.cv as cv
 import ImageUtils
-import dlib
-import openface
-import os
-import argparse
+#import dlib
+#import openface
+#import os
+#import argparse
 import logging
 import SurveillanceSystem
 import MotionDetector
@@ -37,17 +37,17 @@ import FaceDetector
 
 logger = logging.getLogger(__name__)
 
-fileDir = os.path.dirname(os.path.realpath(__file__))
-modelDir = os.path.join(fileDir, '..', 'models')
-dlibModelDir = os.path.join(modelDir, 'dlib')
-openfaceModelDir = os.path.join(modelDir, 'openface')
-parser = argparse.ArgumentParser()
-parser.add_argument('--networkModel', type=str, help="Path to Torch network model.",
-            default=os.path.join(openfaceModelDir, 'nn4.small2.v1.t7'))
-parser.add_argument('--imgDim', type=int,
-            help="Default image dimension.", default=96)
-parser.add_argument('--cuda', action='store_true')
-args = parser.parse_args()
+#fileDir = os.path.dirname(os.path.realpath(__file__))
+#modelDir = os.path.join(fileDir, '..', 'models')
+#dlibModelDir = os.path.join(modelDir, 'dlib')
+#openfaceModelDir = os.path.join(modelDir, 'openface')
+#parser = argparse.ArgumentParser()
+#parser.add_argument('--networkModel', type=str, help="Path to Torch network model.",
+#            default=os.path.join(openfaceModelDir, 'nn4.small2.v1.t7'))
+#parser.add_argument('--imgDim', type=int,
+#            help="Default image dimension.", default=96)
+#parser.add_argument('--cuda', action='store_true')
+#args = parser.parse_args()
 
 CAPTURE_HZ = 30.0 # Determines frame rate at which frames are captured from IP camera
 
@@ -85,9 +85,9 @@ class IPCamera(object):
 		self.peopleDictLock = threading.Lock() # Used to block concurrent access to people dictionary
 		self.video = cv2.VideoCapture(camURL) # VideoCapture object used to capture frames from IP camera
 		logger.info("We are opening the video feed.")
-	 	self.url = camURL
-		if not self.video.isOpened():
-			self.video.open()
+		self.url = camURL
+		#if not self.video.isOpened():
+		#	self.video.open()
 		logger.info("Video feed open.")
 		self.dump_video_info()  # logging every specs of the video feed
 		# Start a thread to continuously capture frames.
@@ -150,7 +150,7 @@ class IPCamera(object):
 		frame = None
 		with self.captureLock:
 			frame = self.processing_frame	
-		while frame == None: # If there are problems, keep retrying until an image can be read.
+		while (frame is None): # If there are problems, keep retrying until an image can be read.
 			with self.captureLock:	
 				frame = self.processing_frame
 
@@ -161,37 +161,37 @@ class IPCamera(object):
 	def dump_video_info(self):
 		logger.info("---------Dumping video feed info---------------------")
 		logger.info("Position of the video file in milliseconds or video capture timestamp: ")
-		logger.info(self.video.get(cv.CV_CAP_PROP_POS_MSEC))
+		logger.info(self.video.get(cv2.CAP_PROP_POS_MSEC))
 		logger.info("0-based index of the frame to be decoded/captured next: ")
-		logger.info(self.video.get(cv.CV_CAP_PROP_POS_FRAMES))
+		logger.info(self.video.get(cv2.CAP_PROP_POS_FRAMES))
 		logger.info("Relative position of the video file: 0 - start of the film, 1 - end of the film: ")
-		logger.info(self.video.get(cv.CV_CAP_PROP_POS_AVI_RATIO))
+		logger.info(self.video.get(cv2.CAP_PROP_POS_AVI_RATIO))
 		logger.info("Width of the frames in the video stream: ")
-		logger.info(self.video.get(cv.CV_CAP_PROP_FRAME_WIDTH))
+		logger.info(self.video.get(cv2.CAP_PROP_FRAME_WIDTH))
 		logger.info("Height of the frames in the video stream: ")
-		logger.info(self.video.get(cv.CV_CAP_PROP_FRAME_HEIGHT))
+		logger.info(self.video.get(cv2.CAP_PROP_FRAME_HEIGHT))
 		logger.info("Frame rate:")
-		logger.info(self.video.get(cv.CV_CAP_PROP_FPS))
+		logger.info(self.video.get(cv2.CAP_PROP_FPS))
 		logger.info("4-character code of codec.")
-		logger.info(self.video.get(cv.CV_CAP_PROP_FOURCC))
+		logger.info(self.video.get(cv2.CAP_PROP_FOURCC))
 		logger.info("Number of frames in the video file.")
-		logger.info(self.video.get(cv.CV_CAP_PROP_FRAME_COUNT))
+		logger.info(self.video.get(cv2.CAP_PROP_FRAME_COUNT))
 		logger.info("Format of the Mat objects returned by retrieve() .")
-		logger.info(self.video.get(cv.CV_CAP_PROP_FORMAT))
+		logger.info(self.video.get(cv2.CAP_PROP_FORMAT))
 		logger.info("Backend-specific value indicating the current capture mode.")
-		logger.info(self.video.get(cv.CV_CAP_PROP_MODE))
+		logger.info(self.video.get(cv2.CAP_PROP_MODE))
 		logger.info("Brightness of the image (only for cameras).")
-		logger.info(self.video.get(cv.CV_CAP_PROP_BRIGHTNESS))
+		logger.info(self.video.get(cv2.CAP_PROP_BRIGHTNESS))
 		logger.info("Contrast of the image (only for cameras).")
-		logger.info(self.video.get(cv.CV_CAP_PROP_CONTRAST))
+		logger.info(self.video.get(cv2.CAP_PROP_CONTRAST))
 		logger.info("Saturation of the image (only for cameras).")
-		logger.info(self.video.get(cv.CV_CAP_PROP_SATURATION))
+		logger.info(self.video.get(cv2.CAP_PROP_SATURATION))
 		logger.info("Hue of the image (only for cameras).")
-		logger.info(self.video.get(cv.CV_CAP_PROP_HUE))
+		logger.info(self.video.get(cv2.CAP_PROP_HUE))
 		logger.info("Gain of the image (only for cameras).")
-		logger.info(self.video.get(cv.CV_CAP_PROP_GAIN))
+		logger.info(self.video.get(cv2.CAP_PROP_GAIN))
 		logger.info("Exposure (only for cameras).")
-		logger.info(self.video.get(cv.CV_CAP_PROP_EXPOSURE))
+		logger.info(self.video.get(cv2.CAP_PROP_EXPOSURE))
 		logger.info("Boolean flags indicating whether images should be converted to RGB.")
-		logger.info(self.video.get(cv.CV_CAP_PROP_CONVERT_RGB))
+		logger.info(self.video.get(cv2.CAP_PROP_CONVERT_RGB))
 		logger.info("--------------------------End of video feed info---------------------")

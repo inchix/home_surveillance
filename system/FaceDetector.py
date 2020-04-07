@@ -17,15 +17,15 @@
 # limitations under the License.
 
 import cv2
-import numpy as np
-import os
-import glob
+##import numpy as np
+#import os
+#import glob
 import dlib
-import sys
-import argparse
+#import sys
+#import argparse
 from PIL import Image
-import math
-import datetime
+#import math
+#import datetime
 import threading
 import logging
 import ImageUtils
@@ -61,7 +61,7 @@ class FaceDetector(object):
         """Performs CLAHE on each RGB components and rebuilds final
         normalised RGB image - side note: improved face detection not recognition"""
         (h, w) = image.shape[:2]    
-        zeros = np.zeros((h, w), dtype="uint8")
+        #zeros = np.zeros((h, w), dtype="uint8") # check numpy import
         clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(10,10))
         (B, G, R) = cv2.split(image)
         R = clahe.apply(R)

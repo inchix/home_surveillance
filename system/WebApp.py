@@ -31,6 +31,9 @@ import os
 import sys
 import cv2
 import psutil
+import io
+
+fileDir = os.path.dirname(os.path.realpath(__file__))
 
 LOG_FILE = 'logs/WebApp.log'
 
@@ -104,6 +107,7 @@ def gen(camera):
     class, you can see all detection bounding boxes. This
     however slows down streaming and therefore read_jpg()
     is recommended"""
+    #print("camera", camera)
     while True:
         frame = camera.read_processed()    # read_jpg()  # read_processed()    
         yield (b'--frame\r\n'
@@ -114,6 +118,13 @@ def video_streamer(camNum):
     """Used to stream frames to client, camNum represents the camera index in the cameras array"""
     return Response(gen(HomeSurveillance.cameras[int(camNum)]),
                     mimetype='multipart/x-mixed-replace; boundary=frame') # A stream where each part replaces the previous part the multipart/x-mixed-replace content type must be used.
+
+@app.route('/camera_snapshot/<camNum>')
+def camera_snapshot(camNum):
+    """Used to get a current snapshot, camNum represents the camera index in the cameras array"""
+    camera = HomeSurveillance.cameras[int(camNum)]
+    img = camera.read_processed()
+    return send_file(io.BytesIO(img), mimetype="image/jpeg", as_attachment=True, attachment_filename="snapshot_cam_{}.jpg".format(camNum))
 
 def system_monitoring():
     """Pushes system monitoring data to client"""
@@ -156,6 +167,7 @@ def add_camera():
         app.logger.info("Addding a new camera with url: ")
         app.logger.info(camURL)
         app.logger.info(fpsTweak)
+        HomeSurveillance.write_config()
         return jsonify(data)
     return render_template('index.html')
 
@@ -168,8 +180,9 @@ def remove_camera():
         data = {"camNum": len(HomeSurveillance.cameras) - 1}
         with HomeSurveillance.camerasLock:
             HomeSurveillance.remove_camera(camID)
-        app.logger.info("Removing camera number : " + data)
+        app.logger.info("Removing camera number : " + str(data["camNum"]))
         data = {"alert_status": "removed"}
+        HomeSurveillance.write_config()
         return jsonify(data)
     return render_template('index.html')
 
@@ -183,6 +196,9 @@ def create_alert():
         person = request.form.get('person')
         push_alert = request.form.get('push_alert')
         email_alert = request.form.get('email_alert')
+        apprise_alert = request.form.get('apprise_alert')
+        mycroft_message = request.form.get('mycroft_message')        
+        apprise_message = request.form.get('apprise_message')        
         trigger_alarm = request.form.get('trigger_alarm')
         notify_police = request.form.get('notify_police')
         confidence = request.form.get('confidence')
@@ -190,11 +206,14 @@ def create_alert():
         #print "unknownconfidence: " + confidence
         app.logger.info("unknownconfidence: " + confidence)
 
-        actions = {'push_alert': push_alert , 'email_alert':email_alert , 'trigger_alarm':trigger_alarm , 'notify_police':notify_police}
+        actions = {'push_alert': push_alert , 'email_alert': email_alert , 
+                   'mycroft_message': mycroft_message, 'apprise_message': apprise_message,
+                   'trigger_alarm': trigger_alarm , 'notify_police': notify_police}
         with HomeSurveillance.alertsLock:
             HomeSurveillance.alerts.append(SurveillanceSystem.Alert(alarmstate,camera, event, person, actions, emailAddress, int(confidence))) 
         HomeSurveillance.alerts[-1].id 
         data = {"alert_id": HomeSurveillance.alerts[-1].id, "alert_message": "Alert if " + HomeSurveillance.alerts[-1].alertString}
+        HomeSurveillance.write_config()
         return jsonify(data)
     return render_template('index.html')
 
@@ -209,6 +228,7 @@ def remove_alert():
                     break
            
         data = {"alert_status": "removed"}
+        HomeSurveillance.write_config()
         return jsonify(data)
     return render_template('index.html')
 
@@ -266,7 +286,7 @@ def retrain_classifier():
     if request.method == 'POST':
         app.logger.info("retrain button pushed. clearing event in surveillance objt and calling trainingEvent")
         HomeSurveillance.trainingEvent.clear() # Block processing threads
-        retrained = HomeSurveillance.recogniser.trainClassifier()#calling the module in FaceRecogniser to start training
+        retrained = HomeSurveillance.recogniser.trainClassifier() #calling the module in FaceRecogniser to start training
         HomeSurveillance.trainingEvent.set() # Release processing threads       
         data = {"finished":  retrained}
         app.logger.info("Finished re-training")
@@ -284,10 +304,9 @@ def get_faceimg(name):
         img = ""
 
     if img == "":
-        return "http://www.character-education.org.uk/images/exec/speaker-placeholder.png"            
-    return  Response((b'--frame\r\n'
-                     b'Content-Type: image/jpeg\r\n\r\n' + img + b'\r\n\r\n'),
-                    mimetype='multipart/x-mixed-replace; boundary=frame') 
+        return fileDir + os.sep + "templates" + os.sep + "Person-placeholder.png"
+    
+    return send_file(io.BytesIO(img), mimetype="image/jpeg", as_attachment=True, attachment_filename="{}.jpg".format(key))
 
 
 @app.route('/get_all_faceimgs/<name>')
@@ -301,7 +320,7 @@ def get_faceimgs(name):
         img = ""
 
     if img == "":
-        return "http://www.character-education.org.uk/images/exec/speaker-placeholder.png"            
+        return fileDir + os.sep + "templates" + os.sep + "Person-placeholder.png"            
     return  Response((b'--frame\r\n'
                      b'Content-Type: image/jpeg\r\n\r\n' + img + b'\r\n\r\n'),
                     mimetype='multipart/x-mixed-replace; boundary=frame') 
@@ -315,7 +334,7 @@ def update_faces():
         with HomeSurveillance.camerasLock :
             for i, camera in enumerate(HomeSurveillance.cameras):
                 with HomeSurveillance.cameras[i].peopleDictLock:
-                    for key, person in camera.people.iteritems():  
+                    for key, person in camera.people.items():  
                         persondict = {'identity': key , 'confidence': person.confidence, 'camera': i, 'timeD':person.time, 'prediction': person.identity,'thumbnailNum': len(person.thumbnails)}
                         app.logger.info(persondict)
                         peopledata.append(persondict)

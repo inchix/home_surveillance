@@ -25,32 +25,33 @@
 import cv2
 import numpy as np
 import os
-import glob
+##import glob
 import dlib
-import sys
+##import sys
 import argparse
-import imagehash
-import json
-from PIL import Image
-import urllib
-import base64
-import pickle
+##import imagehash
+##import json
+##from PIL import Image
+##import urllib
+##import base64
+##import pickle
 import math
-import datetime
+##import datetime
 import threading
 import logging
-import csv
-from sklearn.decomposition import PCA
-from sklearn.grid_search import GridSearchCV
-from sklearn.manifold import TSNE
-from sklearn.svm import SVC
+##import csv
+##from sklearn.decomposition import PCA
+#from sklearn.grid_search import GridSearchCV
+##from sklearn.model_selection import GridSearchCV
+##from sklearn.manifold import TSNE
+##from sklearn.svm import SVC
 import time
 start = time.time()
-from operator import itemgetter
+##from operator import itemgetter
 import numpy as np
-import pandas as pd
-import Camera
-import openface
+##import pandas as pd
+##import Camera
+##import openface
 
 np.set_printoptions(precision=2)
 
