@@ -3,14 +3,14 @@ MAINTAINER domcross
 
 # prevent interactive prompts while installing packages, e.g. ssh or tzdata
 RUN export DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y --no-install-recommends python3-pip libopenblas-base wget git setuptools
+RUN apt-get update && apt-get install -y --no-install-recommends python3-pip libopenblas-base wget git
 RUN apt-get install -y --no-install-recommends libblas-dev liblapack-dev libatlas-base-dev gfortran python3-dev openmpi-bin openmpi-common
 
 RUN python3 -m pip install -U pip
 
 # pytorch 1.4
 RUN wget https://nvidia.box.com/shared/static/ncgzus5o23uck9i5oth2n8n06k340l6k.whl -O torch-1.4.0-cp36-cp36m-linux_aarch64.whl
-RUN python3 -m pip install Cython numpy torch-1.4.0-cp36-cp36m-linux_aarch64.whl
+RUN python3 -m pip install setuptools Cython numpy torch-1.4.0-cp36-cp36m-linux_aarch64.whl
 
 # OpenCV 4.2
 RUN wget https://raw.githubusercontent.com/domcross/nano_build_opencv/master/build_opencv.sh
