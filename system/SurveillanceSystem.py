@@ -941,8 +941,8 @@ class SurveillanceSystem(object):
         for name in os.listdir(path):
             if (name == 'cache.t7' or name.startswith('.') or name[0:7] == 'unknown'):
                 continue
-        self.peopleDB.append(name)
-        logger.info("Known faces in our db for: " + name + " ")
+            self.peopleDB.append(name)
+            logger.info("Known faces in our db for: " + name + " ")
         self.peopleDB.append('unknown')
 
     def change_alarm_state(self):
